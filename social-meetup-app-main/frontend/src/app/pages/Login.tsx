@@ -4,7 +4,6 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Card } from "../components/ui/card";
 import { LanguageSelector } from "../components/LanguageSelector";
 import { Users, AlertCircle } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
@@ -25,7 +24,7 @@ export default function Login() {
 
     try {
       await authService.login({ email, password });
-      navigate("/");
+      navigate("/home");
     } catch (err: any) {
       console.error("Login error:", err);
       setError(err.message || "Invalid email or password");
@@ -101,6 +100,12 @@ export default function Login() {
                 {loading ? "Signing in..." : t("login")}
               </Button>
             </form>
+
+            <div className="text-right -mt-2">
+              <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                Forgot password?
+              </Link>
+            </div>
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

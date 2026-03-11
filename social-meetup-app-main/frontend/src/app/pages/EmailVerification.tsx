@@ -108,7 +108,7 @@ export default function EmailVerification() {
     setError(null);
 
     try {
-      await api.post('/api/auth/verify-email', { code: finalCode });
+      await api.post('/auth/verify-email', { code: finalCode });
       
       // Update local user data
       const user = authService.getCurrentUser();
@@ -119,12 +119,12 @@ export default function EmailVerification() {
 
       setSuccess(true);
 
-      // Redirect to home after 2 seconds
+      // Redirect to dashboard after verification
       setTimeout(() => {
         navigate('/home');
       }, 2000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Invalid verification code. Please try again.');
+      setError(err.message || 'Invalid verification code. Please try again.');
       // Clear code on error
       setCode(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
@@ -142,7 +142,7 @@ export default function EmailVerification() {
     setError(null);
 
     try {
-      await api.post('/api/auth/resend-verification');
+      await authService.sendVerificationEmail();
       setResendCooldown(60); // 60-second cooldown
       
       // Show success message
@@ -152,7 +152,7 @@ export default function EmailVerification() {
       message.className = 'text-sm text-green-600 mt-2';
       setTimeout(() => message.remove(), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to resend code. Please try again.');
+      setError(err.message || 'Failed to resend code. Please try again.');
     } finally {
       setLoading(false);
     }
