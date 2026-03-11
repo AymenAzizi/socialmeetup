@@ -30,9 +30,10 @@ export default function Register() {
       return;
     }
 
-    // Validate password length
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters");
+    // Validate password policy to match backend requirements
+    const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{12,}$/;
+    if (!passwordPolicy.test(formData.password)) {
+      setError("Password must be at least 12 characters and include uppercase, lowercase, number, and special character (@$!%*?&)");
       return;
     }
 
@@ -113,10 +114,10 @@ export default function Register() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
-                  minLength={6}
+                  minLength={12}
                   disabled={loading}
                 />
-                <p className="text-xs text-muted-foreground">At least 6 characters</p>
+                <p className="text-xs text-muted-foreground">At least 12 chars, with uppercase, lowercase, number and special character</p>
               </div>
 
               <div className="space-y-2">

@@ -47,6 +47,7 @@ router.put('/password', protect, changePassword);
 
 // Email verification routes
 router.post('/send-verification-email', protect, sendVerificationEmail);
+router.post('/resend-verification', protect, sendVerificationEmail);
 router.post('/verify-email', protect, verifyEmail);
 
 // Password reset routes
