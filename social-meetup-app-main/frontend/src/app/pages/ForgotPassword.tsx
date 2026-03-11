@@ -132,8 +132,9 @@ export default function ForgotPassword() {
       return;
     }
 
-    if (newPassword.length < 8) {
-      setError('Password must be at least 8 characters long');
+    const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{12,}$/;
+    if (!passwordPolicy.test(newPassword)) {
+      setError('Password must be at least 12 characters and include uppercase, lowercase, number, and special character (@$!%*?&)');
       return;
     }
 

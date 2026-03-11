@@ -55,7 +55,7 @@ export interface User {
   };
   lookingFor?: string[];
   relationshipStatus?: string;
-  isVerified: boolean;
+  isEmailVerified: boolean;
   likedBy?: string[];
   likesCount?: number;
   hostedEventsCount?: number;
@@ -74,28 +74,30 @@ export interface AuthResponse {
 }
 
 class AuthService {
-  async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await api.post('/auth/register', data);
-    const payload = response.data || response;
+  private extractBody(response: any) {
+    return response?.data ? response.data : response;
+  }
 
-    if (payload?.data?.token) {
-      localStorage.setItem('token', payload.data.token);
-      localStorage.setItem('user', JSON.stringify(payload.data.user));
+  async register(data: RegisterData): Promise<AuthResponse> {
+    const body = this.extractBody(await api.post('/auth/register', data));
+
+    if (body?.data?.token) {
+      localStorage.setItem('token', body.data.token);
+      localStorage.setItem('user', JSON.stringify(body.data.user));
     }
 
-    return payload as AuthResponse;
+    return body as AuthResponse;
   }
 
   async login(data: LoginData): Promise<AuthResponse> {
-    const response = await api.post('/auth/login', data);
-    const payload = response.data || response;
+    const body = this.extractBody(await api.post('/auth/login', data));
 
-    if (payload?.data?.token) {
-      localStorage.setItem('token', payload.data.token);
-      localStorage.setItem('user', JSON.stringify(payload.data.user));
+    if (body?.data?.token) {
+      localStorage.setItem('token', body.data.token);
+      localStorage.setItem('user', JSON.stringify(body.data.user));
     }
 
-    return payload as AuthResponse;
+    return body as AuthResponse;
   }
 
   async sendVerificationEmail() {
@@ -109,14 +111,13 @@ class AuthService {
   }
 
   async getMe(): Promise<User> {
-    const response = await api.get('/auth/me');
-    return response.data || response;
+    const body = this.extractBody(await api.get('/auth/me'));
+    return body.data || body;
   }
 
   async updateProfile(data: Partial<User>): Promise<User> {
-    const response = await api.put('/auth/profile', data);
-    // api interceptor already returns response.data
-    const user = response.data || response;
+    const body = this.extractBody(await api.put('/auth/profile', data));
+    const user = body.data || body;
     localStorage.setItem('user', JSON.stringify(user));
     return user;
   }
