@@ -64,7 +64,7 @@ const authLimiter = rateLimit({
 // Middleware
 // CORS Configuration - Development and Production
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? process.env.CLIENT_URL.split(',').map(url => url.trim()) // Production: from env variable (comma-separated)
+  ? (process.env.CLIENT_URL || '').split(',').map(url => url.trim()).filter(Boolean)
   : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000']; // Development: localhost
 
 // Enhanced Helmet configuration with comprehensive security headers

@@ -66,11 +66,11 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      await api.post('/api/auth/forgot-password', { email });
+      await api.post('/auth/forgot-password', { email });
       setStep('code');
       setResendCooldown(60);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to send reset code. Please try again.');
+      setError(err.message || 'Failed to send reset code. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -151,7 +151,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      await api.post('/api/auth/reset-password', {
+      await api.post('/auth/reset-password', {
         email,
         code: fullCode,
         newPassword,
@@ -164,7 +164,7 @@ export default function ForgotPassword() {
         navigate('/login', { state: { message: 'Password reset successful! Please log in.' } });
       }, 2000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to reset password. Please try again.');
+      setError(err.message || 'Failed to reset password. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -179,10 +179,10 @@ export default function ForgotPassword() {
     setError(null);
 
     try {
-      await api.post('/api/auth/forgot-password', { email });
+      await api.post('/auth/forgot-password', { email });
       setResendCooldown(60);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to resend code. Please try again.');
+      setError(err.message || 'Failed to resend code. Please try again.');
     } finally {
       setLoading(false);
     }

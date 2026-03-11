@@ -76,28 +76,30 @@ export interface AuthResponse {
 class AuthService {
   async register(data: RegisterData): Promise<AuthResponse> {
     const response = await api.post('/auth/register', data);
-    
-    // api interceptor already returns response.data
-    if (response.data?.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-    } else {
-      console.error('No token in response:', response);
+    const payload = response.data || response;
+
+    if (payload?.data?.token) {
+      localStorage.setItem('token', payload.data.token);
+      localStorage.setItem('user', JSON.stringify(payload.data.user));
     }
-    return response as unknown as AuthResponse;
+
+    return payload as AuthResponse;
   }
 
   async login(data: LoginData): Promise<AuthResponse> {
     const response = await api.post('/auth/login', data);
-    
-    // api interceptor already returns response.data
-    if (response.data?.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-    } else {
-      console.error('No token in response:', response);
+    const payload = response.data || response;
+
+    if (payload?.data?.token) {
+      localStorage.setItem('token', payload.data.token);
+      localStorage.setItem('user', JSON.stringify(payload.data.user));
     }
-    return response as unknown as AuthResponse;
+
+    return payload as AuthResponse;
+  }
+
+  async sendVerificationEmail() {
+    return api.post('/auth/send-verification-email');
   }
 
   logout() {
@@ -108,7 +110,6 @@ class AuthService {
 
   async getMe(): Promise<User> {
     const response = await api.get('/auth/me');
-    // api interceptor already returns response.data
     return response.data || response;
   }
 
