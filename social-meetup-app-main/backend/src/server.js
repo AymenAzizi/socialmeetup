@@ -13,7 +13,7 @@ const server = http.createServer(app);
 
 // Initialize Socket.IO with environment-aware CORS
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? process.env.CLIENT_URL.split(',').map(url => url.trim())
+  ? (process.env.CLIENT_URL || '').split(',').map(url => url.trim()).filter(Boolean)
   : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'];
 
 const io = new Server(server, {

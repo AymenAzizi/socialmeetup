@@ -220,8 +220,8 @@ export default function ProfileSetup() {
       // Clear temp data
       localStorage.removeItem('tempRegisterData');
 
-      // Navigate to home
-      navigate("/");
+      // Navigate to email verification to complete onboarding flow
+      navigate("/email-verification");
     } catch (err: any) {
       console.error("Registration error:", err);
       setError(err.message || "Registration failed. Please try again.");
@@ -262,14 +262,6 @@ export default function ProfileSetup() {
               <span className="text-sm">{error}</span>
             </div>
           )}
-          {/* Error Display */}
-          {error && (
-            <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg flex items-center gap-2">
-              <AlertCircle className="h-4 w-4" />
-              <span className="text-sm">{error}</span>
-            </div>
-          )}
-
           {/* Step 1: Basic Info */}
           {step === 1 && (
             <div className="space-y-6">

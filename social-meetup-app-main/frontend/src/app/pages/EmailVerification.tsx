@@ -20,6 +20,7 @@ export default function EmailVerification() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [resendSuccess, setResendSuccess] = useState<string | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Redirect to login if not authenticated
@@ -106,9 +107,10 @@ export default function EmailVerification() {
 
     setLoading(true);
     setError(null);
+    setResendSuccess(null);
 
     try {
-      await api.post('/api/auth/verify-email', { code: finalCode });
+      await api.post('/auth/verify-email', { code: finalCode });
       
       // Update local user data
       const user = authService.getCurrentUser();
@@ -119,12 +121,12 @@ export default function EmailVerification() {
 
       setSuccess(true);
 
-      // Redirect to home after 2 seconds
+      // Redirect to dashboard after verification
       setTimeout(() => {
         navigate('/home');
       }, 2000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Invalid verification code. Please try again.');
+      setError(err.message || 'Invalid verification code. Please try again.');
       // Clear code on error
       setCode(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
@@ -142,17 +144,11 @@ export default function EmailVerification() {
     setError(null);
 
     try {
-      await api.post('/api/auth/resend-verification');
+      await authService.sendVerificationEmail();
       setResendCooldown(60); // 60-second cooldown
-      
-      // Show success message
-      setError(null);
-      const message = document.createElement('div');
-      message.textContent = 'Verification code sent! Check your email.';
-      message.className = 'text-sm text-green-600 mt-2';
-      setTimeout(() => message.remove(), 3000);
+      setResendSuccess('Verification code sent! Check your email.');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to resend code. Please try again.');
+      setError(err.message || 'Failed to resend code. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -183,6 +179,13 @@ export default function EmailVerification() {
           </Alert>
         ) : (
           <>
+            {resendSuccess && (
+              <Alert className="bg-green-50 border-green-200 mb-6">
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <AlertDescription className="text-green-800">{resendSuccess}</AlertDescription>
+              </Alert>
+            )}
+
             {error && (
               <Alert variant="destructive" className="mb-6">
                 <AlertTriangle className="h-4 w-4" />

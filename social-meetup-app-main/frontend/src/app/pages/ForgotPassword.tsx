@@ -66,11 +66,11 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      await api.post('/api/auth/forgot-password', { email });
+      await api.post('/auth/forgot-password', { email });
       setStep('code');
       setResendCooldown(60);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to send reset code. Please try again.');
+      setError(err.message || 'Failed to send reset code. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -132,8 +132,9 @@ export default function ForgotPassword() {
       return;
     }
 
-    if (newPassword.length < 8) {
-      setError('Password must be at least 8 characters long');
+    const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{12,}$/;
+    if (!passwordPolicy.test(newPassword)) {
+      setError('Password must be at least 12 characters and include uppercase, lowercase, number, and special character (@$!%*?&)');
       return;
     }
 
@@ -151,7 +152,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      await api.post('/api/auth/reset-password', {
+      await api.post('/auth/reset-password', {
         email,
         code: fullCode,
         newPassword,
@@ -164,7 +165,7 @@ export default function ForgotPassword() {
         navigate('/login', { state: { message: 'Password reset successful! Please log in.' } });
       }, 2000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to reset password. Please try again.');
+      setError(err.message || 'Failed to reset password. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -179,10 +180,10 @@ export default function ForgotPassword() {
     setError(null);
 
     try {
-      await api.post('/api/auth/forgot-password', { email });
+      await api.post('/auth/forgot-password', { email });
       setResendCooldown(60);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to resend code. Please try again.');
+      setError(err.message || 'Failed to resend code. Please try again.');
     } finally {
       setLoading(false);
     }
